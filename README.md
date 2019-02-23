@@ -28,16 +28,18 @@ $ git branch pr2
 $ git checkout pr2
 $ git add .
 $ git commit -m "added 2 files and README.md"
-$ git push
+$ git push -u origin pr2
 ```
 ### Результаты
 ---
 ##### Результат работы программы по поиску максимума. 
 ![](https://cdn1.savepice.ru/uploads/2019/2/23/f0ebcc42b55c020137430cf2e39df143-full.png "max")
+ 
  Первое число - количество чисел. На последней строке - максимум из введенных числел.
  
  ##### Результат работы программы, суммирующей квадраты введенных чисел. 
 ![](https://cdn1.savepice.ru/uploads/2019/2/23/c757985c70e1a3d98d5571f91b42933c-full.png "sum")
+ 
  Первое число - количество чисел. На последней строке - результат.
  
  ### Таблица
