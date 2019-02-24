@@ -24,8 +24,7 @@ $ ./max
 
 3. Далее необходимо все загрузить на удаленный репозиторий:
 ```sh
-$ git branch pr2
-$ git checkout pr2
+$ git checkout -b pr2
 $ git add .
 $ git commit -m "added 2 files and README.md"
 $ git push -u origin pr2
