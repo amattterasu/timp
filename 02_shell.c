@@ -12,12 +12,12 @@ int shellSort(int *arr, int size) {
             tmp = arr[i];
 
             for (j = i; j >= step; j -= step) {
-
+                
+                count++;
                 if (tmp < arr[j - step]) {
                     count++;
                     arr[j] = arr[j - step];
                 } else break;
-                count++;
             }
             arr[j] = tmp;
         }
@@ -32,15 +32,14 @@ int main(int argc, char const *argv[])
 
     int *arr = (int *)malloc(sizeof(int) * npoints);
     
-    srand(time(NULL));
+    /*srand(time(NULL));
     for (i = 0; i < npoints; i++) {
          arr[i] = 0 + rand() %999;
-    }
-
-    /*
+    }*/
+    
     for (i = 0; i < npoints; i++) {
         scanf("%d", &arr[i]);
-    }*/
+    }
 
     count = shellSort(arr, npoints);
 

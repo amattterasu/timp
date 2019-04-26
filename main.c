@@ -40,7 +40,7 @@ int getAmountOperationsQS(int (*callback)(int *, int, int), int *array, int size
 }
 
 void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
-											 int (*callbackQS)(int *, int, int)) {
+				int (*callbackQS)(int *, int, int)) {
     int i, j, k;
 
     double t = 0;
@@ -124,7 +124,7 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
         	"--------------------------------------");
     	printf("%d -> ", lengthsArrays[i]);
         printf("%s %f %s %llu %s %f %s %f\n", 
-        	"\t | \t Average time = ", boxArrayTime[i], 
+        	"\t | \tAverage time = ", boxArrayTime[i], 
         	"\t | \tAverage operations = ", boxCountOperations[i],
         	"\t | \tBest time = ", boxBestArr[i],
         	"\t | \tWorst time = ", boxWorstArr[i]);
