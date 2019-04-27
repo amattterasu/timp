@@ -49,6 +49,9 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
     double boxArrayTime[LENGTHS_ARR];
     unsigned long long boxCountOperations[LENGTHS_ARR];
 
+    double boxTotalTime[LENGTHS_ARR];
+    unsigned long long boxTotalOperations[LENGTHS_ARR];
+
     int lengthsArrays [LENGTHS_ARR] = { 1, 2, 3, 4, 5,
                             10, 15, 20, 25, 30, 50, 75,
                             100, 250, 500 };
@@ -84,13 +87,13 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
 
         }
 
-/*   Average values   */
-        t = t / AMOUNT_ARR;
-        count = count / AMOUNT_ARR;
+/*  Container for total values  */
+       	boxTotalTime[i] = t;
+       	boxTotalOperations[i] = count;
 
 /*  Container for average values  */
-        boxArrayTime[i] = t;
-        boxCountOperations[i] = count;
+        boxArrayTime[i] = t / AMOUNT_ARR;
+        boxCountOperations[i] = count / AMOUNT_ARR;
 
         int *bestTime = malloc(sizeof(int) * lengthsArrays[i]);
         int *worstTime = malloc(sizeof(int) * lengthsArrays[i]);
@@ -115,22 +118,26 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
     printf("%s %s\n","\t\t\t\t\t", nameSort);
 
     for (i = 0; i < LENGTHS_ARR; i++) {
-    	puts("-------------------------------------"
+		puts("-------------------------------------"
         	"--------------------------------------"
         	"-------------------------------------"
-        	"--------------------------------------");
+        	"--------------------------------------"
+        	"------------------------");
     	printf("%d -> ", lengthsArrays[i]);
-        printf("%s %f %s %llu %s %f %s %f\n", 
-        	"\t | \tAverage time = ", boxArrayTime[i], 
-        	"\t | \tAverage operations = ", boxCountOperations[i],
-        	"\t | \tBest time = ", boxBestArr[i],
-        	"\t | \tWorst time = ", boxWorstArr[i]);
+        printf("%s%f %s%f %s%llu %s%llu %20s%f %s%f\n", 
+        	"\t| Average time: ", boxArrayTime[i],
+        	"\t| Total time: ", boxTotalTime[i],
+        	" | Average oper: ", boxCountOperations[i],
+        	"\t\t| Total oper: ", boxTotalOperations[i],
+        	"\t| Best time: ", boxBestArr[i],
+        	"\t| Worst time: ", boxWorstArr[i]);
 
     }
 	puts("-------------------------------------"
         	"--------------------------------------"
         	"-------------------------------------"
-        	"--------------------------------------");
+        	"--------------------------------------"
+        	"------------------------");
 
     printf("\n\n");
 }
