@@ -49,9 +49,6 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
     double boxArrayTime[LENGTHS_ARR];
     unsigned long long boxCountOperations[LENGTHS_ARR];
 
-    double boxArrayTime1[LENGTHS_ARR];
-    unsigned long long boxCountOperations1[LENGTHS_ARR];
-
     int lengthsArrays [LENGTHS_ARR] = { 1, 2, 3, 4, 5,
                             10, 15, 20, 25, 30, 50, 75,
                             100, 250, 500 };
