@@ -5,20 +5,20 @@ int qkSort(int *arr, int l, int r) {
     if (l < r) {
 
         do {
-        while(arr[i] < x) { i++; };
-        while(arr[j] > x) { j--; };
+	        while(arr[i] < x) { i++; };
+	        while(arr[j] > x) { j--; };
 
-        count++;
-        if (i <= j) {  
-            tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
+	        count++;
+	        if (i <= j) {  
+	            tmp = arr[i];
+	            arr[i] = arr[j];
+	            arr[j] = tmp;
 
-            i++;
-            j--;
+	            i++;
+	            j--;
 
-            count ++;
-        }
+	            count ++;
+	        }
 
         } while(i <= j);
 
