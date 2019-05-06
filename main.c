@@ -95,6 +95,7 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
         boxArrayTime[i] = t / AMOUNT_ARR;
         boxCountOperations[i] = count / AMOUNT_ARR;
 
+
         int *bestTime = malloc(sizeof(int) * lengthsArrays[i]);
         int *worstTime = malloc(sizeof(int) * lengthsArrays[i]);
 
@@ -102,6 +103,20 @@ void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
             bestTime[j] = j;
             worstTime[j] = lengthsArrays[i] - j;
         }
+
+      	if (i == 12) {
+      		printf("%s\n", "Array for the best event");
+      		for (int j = 0; j < lengthsArrays[i]; j++) 
+      			printf("%d ", bestTime[j]);
+      		printf("\n");
+
+      		printf("%s\n", "Array for the worst event");
+      		for (int j = 0; j < lengthsArrays[i]; j++) 
+      			printf("%d ", worstTime[j]);
+      		printf("\n\n");
+
+      	}
+
 
         if (access) {
 	        boxBestArr[i] = getTime(callback, bestTime, lengthsArrays[i]);
