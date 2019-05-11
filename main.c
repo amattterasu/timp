@@ -1,160 +1,151 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <limits.h>
+#include <stdbool.h>
 #include <string.h>
-#include "./sort/combSort.h"
-#include "./sort/shellSort.h"
-#include "./sort/qkSort.h"
-#include "./sort/heapSort.h"
+#include "./source/graph.h"
+#include "./source/heap.h"
+#include "./source/foo.h"
+#define SIZE 10
+#define LENGTH 100
 
-#define AMOUNT_ARR 1000
-#define LENGTHS_ARR 15
-#define ELEM 100
+/* <!--          Solution of the first task          --> */
+void Dijkstra (Graph* graph, int src) {
+	int V = graph->V;
+	int dist[V];	 
 
-double getTime(int(*callback)(int *, int), int *array, int size) {
-	double t1 = clock();
-	callback(array, size);
-	double t2 = clock();
-	double t3 = (t2 - t1) / CLOCKS_PER_SEC;
+	minHeap* minHeap = createMinHeap(V);
+    int flag[V];
 
-	return t3;
+	for (int v = 0; v < V; ++v) {
+		flag[0] = -1;
+		dist[v] = INT_MAX;
+		minHeap->arr[v] = newMinHeapNode(v, dist[v]);
+		minHeap->pos[v] = v;
+	}
+
+	minHeap->arr[src] = newMinHeapNode(src, dist[src]);
+	minHeap->pos[src] = src;
+	dist[src] = 0;
+	decreaseKey(minHeap, src, dist[src]);
+
+	minHeap->size = V;
+	// dist
+	while (!isEmpty(minHeap)) {
+
+		minHeapNode* minHeapNode = extractMin(minHeap);
+		int u = minHeapNode->v; 
+
+		AdjListNode* out = graph->arr[u].head;
+		// way
+		while (out != NULL) {
+			int v = out->res;
+
+			if (isMinHeap(minHeap, v) && dist[u] != INT_MAX && out->weight + dist[u] < dist[v]) {
+				flag[v]  = u;
+				dist[v] = dist[u] + out->weight;
+
+				decreaseKey(minHeap, v, dist[v]);
+			}
+			out = out->next;
+		}
+	}
+
+	printSolution(dist, V, flag);
 }
 
-double getTimeQS(int(*callback)(int *, int, int), int *array, int size) {
-	double t1 = clock();
-	callback(array, 0, size - 1);
-	double t2 = clock();
-	double t3 = (t2 - t1) / CLOCKS_PER_SEC;
+/* <!--          Solution of the second task          --> */
+int TSP (char *str, int l, int r, int arr[][SIZE], int n, int min, char path[]) {
+	int i;
 
-	return t3;
-}
+	if (l == r) {
+		int z, totalPath = 0;
 
-int getAmountOperations(int (*callback)(int *, int), int *array, int size) {
+		for (z = 1; str[z] != '\0'; z++)
+			totalPath += arr[str[z - 1] - '0'][str[z] - '0'];
 
-	return callback(array, size);
-}
+		totalPath += arr[str[z - 1] - '0'][str[0] - '0'];
 
-int getAmountOperationsQS(int (*callback)(int *, int, int), int *array, int size) {
+		if (totalPath < min) { 
+			min = totalPath;
 
-	return callback(array, 0, size - 1);
-}
+			for (i = 0; i < n; i++)
+				path[i] = str[i];
+		}
 
-void getRusults(int (*callback)(int *, int), const char *nameSort, int access,
-				int (*callbackQS)(int *, int, int)) {
-    int i, j, k;
+	} else {
 
-    double t = 0;
-    unsigned long long count = 0;
-
-    double boxArrayTime[LENGTHS_ARR];
-    unsigned long long boxCountOperations[LENGTHS_ARR];
-
-    double boxTotalTime[LENGTHS_ARR];
-    unsigned long long boxTotalOperations[LENGTHS_ARR];
-
-    int lengthsArrays [LENGTHS_ARR] = { 1, 2, 3, 4, 5,
-                            10, 15, 20, 25, 30, 50, 75,
-                            100, 250, 500 };
-
-    double boxBestArr[LENGTHS_ARR], boxWorstArr[LENGTHS_ARR];
-
-
-    for (i = 0; i < LENGTHS_ARR; i++) {
-
-        t = count = 0;
-
-        for (j = 0; j < AMOUNT_ARR; j++) {
-
-            int *arr = (int *)malloc(sizeof(int) * lengthsArrays[i]);
-            int *copyArr = (int *)malloc(sizeof(int) * lengthsArrays[i]);
-
-            srand(time(NULL));
-            for (k = 0; k < lengthsArrays[i]; k++) {
-                arr[k] = 0 + rand() %999;
-            }
-            memcpy(copyArr, arr, lengthsArrays[i] * 4);
-
-            if (access) {
-				t += getTime(callback, arr, lengthsArrays[i]);
-				count += getAmountOperations(callback, copyArr, lengthsArrays[i]);
-            } else {
-            	t += getTimeQS(callbackQS, arr, lengthsArrays[i]);
-    			count += getAmountOperationsQS(callbackQS, copyArr, lengthsArrays[i]);
-            }
-
-            free(arr);
-            free(copyArr);
-
-        }
-
-/*  Container for total values  */
-       	boxTotalTime[i] = t;
-       	boxTotalOperations[i] = count;
-
-/*  Container for average values  */
-        boxArrayTime[i] = t / AMOUNT_ARR;
-        boxCountOperations[i] = count / AMOUNT_ARR;
-
-        int *bestTime = malloc(sizeof(int) * lengthsArrays[i]);
-        int *worstTime = malloc(sizeof(int) * lengthsArrays[i]);
-
-        for (j = 0; j < lengthsArrays[i]; j++){
-            bestTime[j] = j;
-            worstTime[j] = lengthsArrays[i] - j;
-        }
-
-        if (access) {
-	        boxBestArr[i] = getTime(callback, bestTime, lengthsArrays[i]);
-	        boxWorstArr[i] = getTime(callback, worstTime, lengthsArrays[i]);
-        } else {
-        	boxBestArr[i] = getTimeQS(callbackQS, bestTime, lengthsArrays[i]);
-        	boxWorstArr[i] = getTimeQS(callbackQS, worstTime, lengthsArrays[i]);
-        }
-
-        free(bestTime);
-        free(worstTime);
-    }
-
-    printf("%s %s\n","\t\t\t\t\t", nameSort);
-
-    for (i = 0; i < LENGTHS_ARR; i++) {
-		puts("-------------------------------------"
-        	"--------------------------------------"
-        	"-------------------------------------"
-        	"--------------------------------------"
-        	"------------------------");
-    	printf("%d -> ", lengthsArrays[i]);
-        printf("%s%f %s%f %s%llu %s%llu %20s%f %s%f\n", 
-        	"\t| Average time: ", boxArrayTime[i],
-        	"\t| Total time: ", boxTotalTime[i],
-        	" | Average oper: ", boxCountOperations[i],
-        	"\t\t| Total oper: ", boxTotalOperations[i],
-        	"\t| Best time: ", boxBestArr[i],
-        	"\t| Worst time: ", boxWorstArr[i]);
-
-    }
-	puts("-------------------------------------"
-        	"--------------------------------------"
-        	"-------------------------------------"
-        	"--------------------------------------"
-        	"------------------------");
-
-    printf("\n\n");
+		for (i = l; i <= r; i++) {
+			swap((str + l), (str + i));
+			min = TSP(str, l + 1, r, arr, n, min, path);
+			swap((str + l), (str + i));
+		}
+	}
+	return min;
 }
 
 int main(int argc, char const *argv[])
 {	
-	const char *nameSort[4];
-	nameSort[0] = "\t\t<!-- \t COMB SORT \t -->";
-	nameSort[1] = "\t\t<!-- \t SHELL SORT \t -->";
-	nameSort[2] = "\t\t<!--\t QUICK SORT \t-->";
-	nameSort[3] = "\t\t<!--\t HEAP SORT \t-->";
+	printf("%s\n", "\n\t\t<!--        Solution of the first task (Dijkstra)     -->");
+
+	int V, edge;
+	printf("Enter no of tops: ");
+	scanf("%d", &V);
+
+	printf("Enter no of edges: ");
+	scanf("%d", &edge);
+
+	int from[edge], to[edge], weight[edge];
+
+	Graph* graph = createGraph(V);
+
+	printf("Enter directions and weights (format 'from -> to -> weight'):\n");
+	for (int i = 0; i < edge; i++) {
+		scanf("%d%d%d", &from[i], &to[i], &weight[i]);
+		addEdge(graph, from[i] - 1, to[i] - 1, weight[i]);
+	}
+	printf("\n");
 	
-	//Crutches
-	getRusults(combSort, nameSort[0], 1, qkSort);
-	getRusults(shellSort, nameSort[1], 1, qkSort);
-	getRusults(combSort, nameSort[2], 0, qkSort);
-	getRusults(heapSort, nameSort[3], 1, qkSort);
+	Dijkstra(graph, 0);
+
+	/* -------------------------------------------------------------*/
+
+	printf("%s\n", "\n\t\t<!--        Solution of the second task (TSP)     -->");
+
+	int arr[SIZE][SIZE];
+	int i, j = 1, n, min = 10000;
+
+	char path[LENGTH], str[LENGTH];
+
+	printf("Enter no of tops: ");
+	scanf("%d", &n);
+
+	str[0] = '0'; //48 - 52 = 5++ (+1)
+	for (i = 1; i < n; i++) {
+
+		if ('0' + j - 1 == '0') {
+			j++;
+			i--;
+			continue;
+		}
+		str[i] = '0' + j - 1;
+		j++;
+	}
+
+	printf("Enter adjacency matrix (Distance to yourself = 10000):\n");
+	for (i = 0; i < n; i++)
+		for (j = 0; j < n; j++)
+			scanf("%d", &arr[i][j]);
+
+	int num = strlen(str);
+	min = TSP(str, 1, num - 1, arr, n, min, path);
+
+	printf("\nThe shortest path is: %d\n", min);
+
+	printf("Path: ");
+	for (i = 0; i < n; i++)
+		printf("%d->", path[i] - '0' + 1);
+	printf("%d\n", path[0] - '0' + 1);
 
 	return 0;
 }
