@@ -3,149 +3,158 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <string.h>
-#include "./source/graph.h"
-#include "./source/heap.h"
-#include "./source/foo.h"
+#define MAX 999999
 #define SIZE 10
+#define INF 999
 #define LENGTH 100
+#include "./source/foo.h"
 
 /* <!--          Solution of the first task          --> */
-void Dijkstra (Graph* graph, int src) {
-	int V = graph->V;
-	int dist[V];	 
+void Dijkstra (int nNode, int current, int* visited, 
+                            int* parent, int *distance, int arrWeight[][nNode]) {
+    visited[current] = 1;
 
-	minHeap* minHeap = createMinHeap(V);
-    int flag[V];
+    for (int i = 0; i < nNode; i++) {
 
-	for (int v = 0; v < V; ++v) {
-		flag[0] = -1;
-		dist[v] = INT_MAX;
-		minHeap->arr[v] = newMinHeapNode(v, dist[v]);
-		minHeap->pos[v] = v;
-	}
+        if (arrWeight[current][i] == MAX) continue;
 
-	minHeap->arr[src] = newMinHeapNode(src, dist[src]);
-	minHeap->pos[src] = src;
-	dist[src] = 0;
-	decreaseKey(minHeap, src, dist[src]);
+        int newDist = distance[current] + arrWeight[current][i];
 
-	minHeap->size = V;
-	// dist
-	while (!isEmpty(minHeap)) {
+        if (newDist < distance[i]) {
+            distance[i] = newDist;
+            parent[i] = current;
+        }
+    }
+    
+    int min = MAX;
+    int minIndex;
 
-		minHeapNode* minHeapNode = extractMin(minHeap);
-		int u = minHeapNode->v; 
+    for (int i = 0; i < nNode; i++) {
 
-		AdjListNode* out = graph->arr[u].head;
-		// way
-		while (out != NULL) {
-			int v = out->res;
+        if (visited[i]) continue;
 
-			if (isMinHeap(minHeap, v) && dist[u] != INT_MAX && out->weight + dist[u] < dist[v]) {
-				flag[v]  = u;
-				dist[v] = dist[u] + out->weight;
+        if (distance[i] < min) {
+            min = distance[i];
+            minIndex = i;
+        }
+    }
 
-				decreaseKey(minHeap, v, dist[v]);
-			}
-			out = out->next;
-		}
-	}
-
-	printSolution(dist, V, flag);
+    if (min == MAX) return;
+    
+    Dijkstra(nNode, minIndex, visited, parent, distance, arrWeight);
 }
 
 /* <!--          Solution of the second task          --> */
 int TSP (char *str, int l, int r, int arr[][SIZE], int n, int min, char path[]) {
-	int i;
+    int i;
 
-	if (l == r) {
-		int z, totalPath = 0;
+    if (l == r) {
+        int z, totalPath = 0;
 
-		for (z = 1; str[z] != '\0'; z++)
-			totalPath += arr[str[z - 1] - '0'][str[z] - '0'];
+        for (z = 1; str[z] != '\0'; z++)
+            totalPath += arr[str[z - 1] - '0'][str[z] - '0'];
 
-		totalPath += arr[str[z - 1] - '0'][str[0] - '0'];
+        totalPath += arr[str[z - 1] - '0'][str[0] - '0'];
 
-		if (totalPath < min) { 
-			min = totalPath;
+        if (totalPath < min) { 
+            min = totalPath;
 
-			for (i = 0; i < n; i++)
-				path[i] = str[i];
-		}
+            for (i = 0; i < n; i++)
+                path[i] = str[i];
+        }
 
-	} else {
+    } else {
 
-		for (i = l; i <= r; i++) {
-			swap((str + l), (str + i));
-			min = TSP(str, l + 1, r, arr, n, min, path);
-			swap((str + l), (str + i));
-		}
-	}
-	return min;
+        for (i = l; i <= r; i++) {
+            swap((str + l), (str + i));
+            min = TSP(str, l + 1, r, arr, n, min, path);
+            swap((str + l), (str + i));
+        }
+    }
+    return min;
 }
 
 int main(int argc, char const *argv[])
-{	
-	printf("%s\n", "\n\t\t<!--        Solution of the first task (Dijkstra)     -->");
+{   
+    /* <!--       Dijkstra      -->*/
+    int nNode, start;
+    printf("Input the number of nodes: ");
+    scanf("%d", &nNode);
+    int arrWeight[nNode][nNode];
+    int visited[nNode], parent[nNode], distance[nNode];
 
-	int V, edge;
-	printf("Enter no of tops: ");
-	scanf("%d", &V);
+    inputMatrixDijkstra(nNode, start, visited, parent, distance, arrWeight);
 
-	printf("Enter no of edges: ");
-	scanf("%d", &edge);
+    Dijkstra(nNode, start, visited, parent, distance, arrWeight);
 
-	int from[edge], to[edge], weight[edge];
+    /* <!--      Print Dijkstra      -->*/
+    printf("\nPath FROM %d TO:\n\t", start + 1);
+    for (int i = 0; i < nNode; i++) {
 
-	Graph* graph = createGraph(V);
+        if (i == start) {
+            printf("%d: not applicable\n", i + 1);
+            continue;
+        }
 
-	printf("Enter directions and weights (format 'from -> to -> weight'):\n");
-	for (int i = 0; i < edge; i++) {
-		scanf("%d%d%d", &from[i], &to[i], &weight[i]);
-		addEdge(graph, from[i] - 1, to[i] - 1, weight[i]);
-	}
-	printf("\n");
-	
-	Dijkstra(graph, 0);
+        int current = i;
 
-	/* -------------------------------------------------------------*/
+        int path[nNode];
+        int num = nNode - 1;
+        for (int j = 0; j < nNode; j++) {
+            path[j] = -1;
+        }
 
-	printf("%s\n", "\n\t\t<!--        Solution of the second task (TSP)     -->");
+        while (current > -1) {
+            path[num--] = current;
+            current = parent[current];
+        }
 
-	int arr[SIZE][SIZE];
-	int i, j = 1, n, min = 10000;
+        printf("\t%d: ", i + 1);
+        for (int j = 0; j < nNode; j++) {
 
-	char path[LENGTH], str[LENGTH];
+            if (path[j] == -1) continue;
+            printf("%d", path[j] + 1);
+            if (j + 1 != nNode) printf("->");
+        }
+        printf("\t\t\tDistance: %d\n", distance[i]);
+    }
 
-	printf("Enter no of tops: ");
-	scanf("%d", &n);
+    /* <!--       Travelling Salesman Problem       -->*/
 
-	str[0] = '0'; //48 - 52 = 5++ (+1)
-	for (i = 1; i < n; i++) {
+    int arr[SIZE][SIZE];
+    int i, j = 1, n, min = 10000;
 
-		if ('0' + j - 1 == '0') {
-			j++;
-			i--;
-			continue;
-		}
-		str[i] = '0' + j - 1;
-		j++;
-	}
+    char path[LENGTH], str[LENGTH];
 
-	printf("Enter adjacency matrix (Distance to yourself = 10000):\n");
-	for (i = 0; i < n; i++)
-		for (j = 0; j < n; j++)
-			scanf("%d", &arr[i][j]);
+    printf("Enter no of tops: ");
+    scanf("%d", &n);
 
-	int num = strlen(str);
-	min = TSP(str, 1, num - 1, arr, n, min, path);
+    str[0] = '0'; //48 - 52 = 5++ (+1)
+    for (i = 1; i < n; i++) {
 
-	printf("\nThe shortest path is: %d\n", min);
+        if ('0' + j - 1 == '0') {
+            j++;
+            i--;
+            continue;
+        }
+        str[i] = '0' + j - 1;
+        j++;
+    }
 
-	printf("Path: ");
-	for (i = 0; i < n; i++)
-		printf("%d->", path[i] - '0' + 1);
-	printf("%d\n", path[0] - '0' + 1);
+    printf("Enter adjacency matrix (10000 to yourself, 10000 if not connected):\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &arr[i][j]);
 
-	return 0;
+    int num = strlen(str);
+    min = TSP(str, 1, num - 1, arr, n, min, path);
+
+    printf("\nThe shortest path is: %d\n", min);
+
+    printf("Path: ");
+    for (i = 0; i < n; i++)
+        printf("%d->", path[i] - '0' + 1);
+    printf("%d\n", path[0] - '0' + 1);
+
+    return 0;
 }

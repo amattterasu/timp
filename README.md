@@ -36,7 +36,7 @@ $ git push -u origin lab2
 ## Результаты
 
 ### Задание 1. Алгоритм Дейкстры
-![](https://cdn1.savepice.ru/uploads/2019/5/10/dd68bdf4eb396735df059e521bdd9d25-full.png "Dijkstra_1")
+![](https://cdn1.savepice.ru/uploads/2019/5/24/75c7cea95d475386f3c2e5c4147cb529-full.png "Dijkstra_1")
 
 ### Задание 2. Travelling salesman problem (brute)
 ![](https://cdn1.savepice.ru/uploads/2019/5/10/cd48fa80bbfbd25e9b815ee9fa3dc655-full.png "TSP_2")

@@ -1,24 +1,59 @@
-/* for dijkstra*/
-void printPath(int parent[], int j) {
-    if (parent[j] == -1)
-        return;
- 
-    printPath(parent, parent[j]);
-    printf("%d ", j + 1);
-}
+void inputMatrixDijkstra(int nNode, int start, 
+        int visited[nNode], int parent[nNode], int distance[nNode], int arrWeight[][nNode]) {
 
-void printSolution(int dist[], int n, int parent[]) {
-    int src = 0;
-    printf("Vertex\t\t Distance\tPath");
+    printf("Input the matrix (0 to yourself, 999999 if not connected)\n");
+    for (int i = 0; i < nNode; i++) {
 
-    for (int i = 1; i < n ; i++) {
-        printf("\n%d -> %d \t\t %d\t\t%d ", src + 1, i + 1, dist[i], src + 1);
-        printPath(parent, i);
+        for (int j = 0; j < nNode; j++) {
+
+            if (i == j) {
+                arrWeight[i][j] = 0;
+                continue;
+            }
+            printf("%d ->> %d  ", i + 1, j + 1);
+            scanf("%d", &arrWeight[i][j]);
+        }
+    }       
+
+    printf("Input starting index, between 1 and %d\n", nNode);
+    scanf("%d", &start);
+    start--;
+
+    if (start < 0 || start > nNode - 1) {
+        printf("ERROR incorrect starting vertex number\n");
+        exit(EXIT_FAILURE);
     }
-    printf("\n");
+
+    for (int i = 0; i < nNode; i++) {
+        visited[i] = 0;
+        parent[i] = -1;
+        distance[i] = MAX;
+    }
+
+    distance[start] = 0;
 }
 
-/* for tsp*/
+int inputMatrixTSP(int matrix[][SIZE], int done[SIZE]) {
+    int i, j, n;
+
+    printf("Input the no of villages: ");
+    scanf("%d", &n);
+
+    printf("\nInput the path Matrix");
+
+    for (i = 0; i < n; i++) {
+
+        printf("\nInput row of Matrix: %d\n", i + 1);
+
+        for (j = 0; j < n; j++)
+            scanf("%d", &matrix[i][j]);
+
+        done[i] = 0;
+    }
+
+    return n;
+}
+
 void swap(char *a, char *b) {
     char tmp;
     tmp = *a;
