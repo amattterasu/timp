@@ -33,27 +33,6 @@ void inputMatrixDijkstra(int nNode, int start,
     distance[start] = 0;
 }
 
-int inputMatrixTSP(int matrix[][SIZE], int done[SIZE]) {
-    int i, j, n;
-
-    printf("Input the no of villages: ");
-    scanf("%d", &n);
-
-    printf("\nInput the path Matrix");
-
-    for (i = 0; i < n; i++) {
-
-        printf("\nInput row of Matrix: %d\n", i + 1);
-
-        for (j = 0; j < n; j++)
-            scanf("%d", &matrix[i][j]);
-
-        done[i] = 0;
-    }
-
-    return n;
-}
-
 void swap(char *a, char *b) {
     char tmp;
     tmp = *a;
